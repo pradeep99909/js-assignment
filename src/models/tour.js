@@ -7,8 +7,17 @@ const getAllTours = async () => {
 }
 
 const getMatchesByTourName = async params => {
-    const statement = 'select * from matches left join tours on matches.tourId = tours.id where tours.name = ?';
-    const parameters = [ params.name ];
+    let  statement = 'select * from matches left join tours on matches.tourId = tours.id where tours.name = ?';
+    const parameters = [ params.name, Number(params.limit), Number(params.skip) ];
+
+    if(params.limit) {
+        statement = statement.concat(' limit ?');
+        parameters.push(Number(params.limit));
+    }
+    if(params.skip) {
+        statement = statement.concat(' offset ?');
+        parameters.push(Number(params.skip));
+    }
     return await mysql.query(statement, parameters);
 }
 
